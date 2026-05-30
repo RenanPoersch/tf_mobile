@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'user_view.dart';
 import 'event_view.dart';
-// import 'registration_view.dart';
+import 'registration_view.dart';
 import '../viewmodels/user_viewmodel.dart';
 import '../viewmodels/event_viewmodel.dart';
-// import '../viewmodels/registration_viewmodel.dart';
+import '../viewmodels/registration_viewmodel.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -13,7 +13,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Event Manager'),
+        title: const Text('Gerenciador de Eventos'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -22,7 +22,7 @@ class HomeView extends StatelessWidget {
               child: Text('Menu'),
             ),
             ListTile(
-              title: const Text('Users'),
+              title: const Text('Usuários'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -35,7 +35,7 @@ class HomeView extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('Events'),
+              title: const Text('Eventos'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -47,24 +47,24 @@ class HomeView extends StatelessWidget {
                 );
               },
             ),
-            // ListTile(
-            //   title: const Text('Registrations'),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => RegistrationView(
-            //           registrationViewModel: RegistrationViewModel(),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
+            ListTile(
+              title: const Text('Registros'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => RegistrationView(
+                      registrationViewModel: RegistrationViewModel(),
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
       body: const Center(
-        child: Text('Select an option from the menu'),
+        child: Text('Bem-vindo'),
       ),
     );
   }

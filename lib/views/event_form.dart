@@ -92,7 +92,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.initial == null ? 'Add Event' : 'Edit Event'),
+      title: Text(widget.initial == null ? 'Adicionar Evento' : 'Editar Evento'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -101,10 +101,10 @@ class _EventFormDialogState extends State<EventFormDialog> {
             children: [
               TextFormField(
                 controller: _nameCtrl,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Nome'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return 'Obrigatório';
                   }
                   return null;
                 },
@@ -112,10 +112,10 @@ class _EventFormDialogState extends State<EventFormDialog> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _descriptionCtrl,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Descrição'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return 'Obrigatório';
                   }
                   return null;
                 },
@@ -127,12 +127,12 @@ class _EventFormDialogState extends State<EventFormDialog> {
                 readOnly: true,
                 onTap: _pickDate,
                 decoration: const InputDecoration(
-                  labelText: 'Date',
-                  hintText: 'Pick a date',
+                  labelText: 'Data',
+                  hintText: 'Selecione a data',
                 ),
                 validator: (value) {
                   if (_selectedDate == null) {
-                    return 'Required';
+                    return 'Obrigatório';
                   }
                   return null;
                 },
@@ -140,14 +140,14 @@ class _EventFormDialogState extends State<EventFormDialog> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _typeCtrl,
-                decoration: const InputDecoration(labelText: 'Event Type'),
+                decoration: const InputDecoration(labelText: 'Tipo de Evento'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return 'Obrigatório';
                   }
                   if (int.tryParse(value.trim()) == null) {
-                    return 'Must be a number';
+                    return 'Deve ser um número';
                   }
                   return null;
                 },
@@ -155,10 +155,10 @@ class _EventFormDialogState extends State<EventFormDialog> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _imageCtrl,
-                decoration: const InputDecoration(labelText: 'Image'),
+                decoration: const InputDecoration(labelText: 'Imagem'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return 'Obrigatório';
                   }
                   return null;
                 },
@@ -170,11 +170,11 @@ class _EventFormDialogState extends State<EventFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         ElevatedButton(
           onPressed: _save,
-          child: const Text('Save'),
+          child: const Text('Salvar'),
         ),
       ],
     );
