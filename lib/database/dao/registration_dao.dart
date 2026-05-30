@@ -35,12 +35,12 @@ class RegistrationDao {
     );
   }
 
-  Future<int> delete(Registration registration) async {
+  Future<int> delete(int id) async {
     final Database db = await _dbProvider.database;
     return await db.delete(
       tableName,
       where: 'id = ?',
-      whereArgs: [registration.id]
+      whereArgs: [id]
     );
   }
 

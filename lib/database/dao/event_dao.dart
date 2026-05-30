@@ -25,12 +25,12 @@ class EventDao {
     );
   }
 
-  Future<int> delete(Event event) async {
+  Future<int> delete(int id) async {
     final Database db = await _dbProvider.database;
     return await db.delete(
       tableName,
       where: 'id = ?',
-      whereArgs: [event.id]
+      whereArgs: [id]
     );
   }
 
