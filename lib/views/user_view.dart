@@ -47,9 +47,43 @@ class _UserViewState extends State<UserView> {
                       return ListTile(
                         title: Text(user.name),
                         subtitle: Text(user.email),
-                        trailing: Icon(
-                          user.active ? Icons.check_circle : Icons.cancel,
-                          color: user.active ? Colors.green : Colors.red,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              user.active ? Icons.check_circle : Icons.cancel,
+                              color: user.active ? Colors.green : Colors.red,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Confirmar'),
+                                    content: Text('Deletar usuário "${user.name}"?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(ctx).pop(false),
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => Navigator.of(ctx).pop(true),
+                                        child: const Text('Deletar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed != true) return;
+
+                                await widget.userViewModel.deleteUser(user);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Usuário deletado')),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         onTap: () {
                           showDialog(
