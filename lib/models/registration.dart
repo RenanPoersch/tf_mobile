@@ -11,7 +11,7 @@ class Registration {
       'id': id,
       'userId': userId,
       'eventId': eventId,
-      'isConfirmed': isConfirmed
+      'isConfirmed': isConfirmed ? 1 : 0
     };
   }
 
