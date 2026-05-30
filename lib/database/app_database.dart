@@ -115,7 +115,7 @@ class AppDatabase {
       description: 'Me dá um 10 ai vai',
       date: DateTime.now().add(const Duration(days: 30)).toIso8601String(),
       eventType: 2,
-      image: 'https://i1.rgstatic.net/ii/profile.image/273530793230357-1442226231971_Q512/Daniel-Tortelli.jpg',
+      image: 'assets/images/daniel_tortelli.jpg',
     );
 
     await _ensureRegistration(
