@@ -18,6 +18,40 @@ class _EventViewState extends State<EventView> {
     widget.eventViewModel.loadEvents();
   }
 
+  Widget _buildEventImage(String image) {
+    if (image.trim().isEmpty) {
+      return const CircleAvatar(child: Icon(Icons.event));
+    }
+
+    final uri = Uri.tryParse(image.trim());
+    final isNetworkImage = uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox(
+        width: 56,
+        height: 56,
+        child: isNetworkImage
+            ? Image.network(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const ColoredBox(
+                  color: Color(0xFFE0E0E0),
+                  child: Icon(Icons.broken_image),
+                ),
+              )
+            : Image.asset(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const ColoredBox(
+                  color: Color(0xFFE0E0E0),
+                  child: Icon(Icons.image_not_supported),
+                ),
+              ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -45,6 +79,7 @@ class _EventViewState extends State<EventView> {
                     itemBuilder: (context, index) {
                       final event = widget.eventViewModel.events[index];
                       return ListTile(
+                        leading: _buildEventImage(event.image),
                         title: Text(event.name),
                         subtitle: Text(event.description),
                         trailing: Row(
