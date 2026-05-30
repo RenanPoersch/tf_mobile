@@ -15,8 +15,7 @@ class AppDatabase {
   }
 
   Future<Database> _initDatabase() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, 'events_manager.db');
+    final path = await _databasePath();
 
     return openDatabase(
       path,
@@ -28,6 +27,22 @@ class AppDatabase {
 
   Future<void> _onOpen(Database db) async {
     await _seedIfEmpty(db);
+  }
+
+  Future<String> _databasePath() async {
+    final databasesPath = await getDatabasesPath();
+    return join(databasesPath, 'events_manager.db');
+  }
+
+  Future<void> resetDatabase() async {
+    final path = await _databasePath();
+
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+    }
+
+    await deleteDatabase(path);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -87,20 +102,20 @@ class AppDatabase {
 
     final event1Id = await _ensureEvent(
       db,
-      name: 'Flutter Workshop',
-      description: 'Oficina prática de Flutter',
+      name: 'Rinha de Devs',
+      description: 'Último vivo ganha',
       date: DateTime.now().add(const Duration(days: 7)).toIso8601String(),
       eventType: 1,
-      image: '',
+      image: 'https://i.scdn.co/image/ab6765630000ba8ac92a9c1d5d3fe60513c24a0b',
     );
 
     final event2Id = await _ensureEvent(
       db,
-      name: 'Encontro de Devs',
-      description: 'Palestras e networking',
+      name: 'Trabalho final de Mobile',
+      description: 'Me dá um 10 ai vai',
       date: DateTime.now().add(const Duration(days: 30)).toIso8601String(),
       eventType: 2,
-      image: '',
+      image: 'https://i1.rgstatic.net/ii/profile.image/273530793230357-1442226231971_Q512/Daniel-Tortelli.jpg',
     );
 
     await _ensureRegistration(

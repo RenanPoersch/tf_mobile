@@ -47,9 +47,43 @@ class _EventViewState extends State<EventView> {
                       return ListTile(
                         title: Text(event.name),
                         subtitle: Text(event.description),
-                        trailing: Icon(
-                          Icons.event,
-                          color: Theme.of(context).colorScheme.primary,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Confirmar'),
+                                    content: Text('Deletar evento "${event.name}"?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(ctx).pop(false),
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => Navigator.of(ctx).pop(true),
+                                        child: const Text('Deletar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed != true) return;
+
+                                await widget.eventViewModel.deleteEvent(event.id!);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Evento deletado')),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         onTap: () {
                           showDialog(
