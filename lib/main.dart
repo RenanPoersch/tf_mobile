@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'views/user_view.dart';
-import 'viewmodels/user_viewmodel.dart';
+import 'views/home_view.dart';
 
 void main() {
-  // Instância do ViewModel criada no ponto de entrada
-  final userViewModel = UserViewModel();
-  runApp(MyApp(userViewModel: userViewModel));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final UserViewModel userViewModel;
-  const MyApp({super.key, required this.userViewModel});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      // Passa o ViewModel para a HomeView via construtor
-      home: UserView(userViewModel: userViewModel),
+      home: const HomeView(),
     );
   }
 }
