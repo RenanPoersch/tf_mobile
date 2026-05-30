@@ -48,7 +48,7 @@ class HomeView extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('Registros'),
+              title: const Text('Inscrições'),
               onTap: () {
                 Navigator.push(
                   context,

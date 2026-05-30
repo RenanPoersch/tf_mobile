@@ -42,31 +42,58 @@ class _RegistrationViewState extends State<RegistrationView> {
       builder: (context, _) {
         final regs = widget.registrationViewModel.registrations;
         return Scaffold(
-          appBar: AppBar(title: const Text('Registros')),
+          appBar: AppBar(title: const Text('Inscrições')),
           body: Padding(
             padding: const EdgeInsets.all(12),
             child: regs.isEmpty
-                ? const Center(child: Text('Sem registros ainda'))
+                ? const Center(child: Text('Sem inscrições ainda'))
                 : ListView.separated(
                     itemCount: regs.length,
                     separatorBuilder: (_, __) => const Divider(),
                     itemBuilder: (context, i) {
                       final r = regs[i];
-                      final userName =
-                          _users.firstWhere((u) => u.id == r.userId, orElse: () => User(id: r.userId, name: 'User ${r.userId}', email: '')).name;
-                      final eventName =
-                          _events.firstWhere((e) => e.id == r.eventId, orElse: () => Event(id: r.eventId, name: 'Event ${r.eventId}', description: '', date: DateTime.now(), eventType: 0, image: '')).name;
+                        final userName =
+                          _users.firstWhere((u) => u.id == r.userId, orElse: () => User(id: r.userId, name: 'Usuário ${r.userId}', email: '')).name;
+                        final eventName =
+                          _events.firstWhere((e) => e.id == r.eventId, orElse: () => Event(id: r.eventId, name: 'Evento ${r.eventId}', description: '', date: DateTime.now(), eventType: 0, image: '')).name;
                       return ListTile(
                         title: Text('$userName — $eventName'),
                         subtitle: Text(r.isConfirmed ? 'Confirmado' : 'Pendente'),
-                        trailing: Switch(
-                          value: r.isConfirmed,
-                          onChanged: (v) async {
-                            await widget.registrationViewModel.updateConfirmation(r.id!, v);
-                          },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Switch(
+                              value: r.isConfirmed,
+                              onChanged: (v) async {
+                                await widget.registrationViewModel.updateConfirmation(r.id!, v);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(v ? 'Inscrição confirmada' : 'Inscrição marcada como pendente')),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () async {
+                                final confirmado = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Confirmar exclusão'),
+                                    content: Text('Excluir inscrição de $userName no evento $eventName?'),
+                                    actions: [
+                                      TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancelar')),
+                                      ElevatedButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Excluir')),
+                                    ],
+                                  ),
+                                );
+                                if (confirmado != true) return;
+                                await widget.registrationViewModel.deleteRegistration(r.id!);
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inscrição excluída')));
+                              },
+                            ),
+                          ],
                         ),
                         onTap: () {
-                          // small edit flow can be added later
+                         
                         },
                       );
                     },
@@ -89,7 +116,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Novo Registro'),
+      title: const Text('Nova Inscrição'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

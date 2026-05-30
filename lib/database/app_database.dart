@@ -22,7 +22,12 @@ class AppDatabase {
       path,
       version: 1,
       onCreate: _onCreate,
+      onOpen: _onOpen,
     );
+  }
+
+  Future<void> _onOpen(Database db) async {
+    await _seedIfEmpty(db);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -57,6 +62,59 @@ class AppDatabase {
         FOREIGN KEY (eventId) REFERENCES events (id)
       )
     ''');
+
+    await _seedDatabase(db);
   }
 
+  Future<void> _seedIfEmpty(Database db) async {
+    final result = await db.rawQuery('SELECT COUNT(*) AS count FROM users');
+    final count = result.first['count'] as int? ?? 0;
+
+    if (count == 0) {
+      await _seedDatabase(db);
+    }
+  }
+
+  Future<void> _seedDatabase(Database db) async {
+    // Seed data: usuários, eventos e inscrições iniciais
+    final user1Id = await db.insert('users', {
+      'name': 'Ana Silva',
+      'email': 'ana.silva@example.com',
+      'active': 1,
+    });
+
+    final user2Id = await db.insert('users', {
+      'name': 'Bruno Costa',
+      'email': 'bruno.costa@example.com',
+      'active': 1,
+    });
+
+    final event1Id = await db.insert('events', {
+      'name': 'Flutter Workshop',
+      'description': 'Oficina prática de Flutter',
+      'date': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+      'eventType': 1,
+      'image': null,
+    });
+
+    final event2Id = await db.insert('events', {
+      'name': 'Encontro de Devs',
+      'description': 'Palestras e networking',
+      'date': DateTime.now().add(const Duration(days: 30)).toIso8601String(),
+      'eventType': 2,
+      'image': null,
+    });
+
+    await db.insert('registrations', {
+      'userId': user1Id,
+      'eventId': event1Id,
+      'isConfirmed': 1,
+    });
+
+    await db.insert('registrations', {
+      'userId': user2Id,
+      'eventId': event2Id,
+      'isConfirmed': 0,
+    });
+  }
 }
