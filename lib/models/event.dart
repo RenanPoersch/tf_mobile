@@ -33,7 +33,7 @@ class Event {
       description: map['description'] as String,
       date: DateTime.parse(map['date'] as String),
       eventType: map['eventType'] as int,
-      image: map['image'] as String,
+      image: map['image'] as String? ?? '',
     );
   }
 

@@ -67,54 +67,132 @@ class AppDatabase {
   }
 
   Future<void> _seedIfEmpty(Database db) async {
-    final result = await db.rawQuery('SELECT COUNT(*) AS count FROM users');
-    final count = result.first['count'] as int? ?? 0;
-
-    if (count == 0) {
-      await _seedDatabase(db);
-    }
+    await _seedDatabase(db);
   }
 
   Future<void> _seedDatabase(Database db) async {
-    // Seed data: usuários, eventos e inscrições iniciais
-    final user1Id = await db.insert('users', {
-      'name': 'Ana Silva',
-      'email': 'ana.silva@example.com',
+    // Seed data: usuários, eventos e inscrições iniciais.
+    // Cada bloco só insere o item se ele ainda não existir.
+    final user1Id = await _ensureUser(
+      db,
+      name: 'Ana Silva',
+      email: 'ana.silva@example.com',
+    );
+
+    final user2Id = await _ensureUser(
+      db,
+      name: 'Bruno Costa',
+      email: 'bruno.costa@example.com',
+    );
+
+    final event1Id = await _ensureEvent(
+      db,
+      name: 'Flutter Workshop',
+      description: 'Oficina prática de Flutter',
+      date: DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+      eventType: 1,
+      image: '',
+    );
+
+    final event2Id = await _ensureEvent(
+      db,
+      name: 'Encontro de Devs',
+      description: 'Palestras e networking',
+      date: DateTime.now().add(const Duration(days: 30)).toIso8601String(),
+      eventType: 2,
+      image: '',
+    );
+
+    await _ensureRegistration(
+      db,
+      userId: user1Id,
+      eventId: event1Id,
+      isConfirmed: 1,
+    );
+
+    await _ensureRegistration(
+      db,
+      userId: user2Id,
+      eventId: event2Id,
+      isConfirmed: 0,
+    );
+  }
+
+  Future<int> _ensureUser(
+    Database db, {
+    required String name,
+    required String email,
+  }) async {
+    final existing = await db.query(
+      'users',
+      columns: ['id'],
+      where: 'email = ?',
+      whereArgs: [email],
+      limit: 1,
+    );
+
+    if (existing.isNotEmpty) {
+      return existing.first['id'] as int;
+    }
+
+    return db.insert('users', {
+      'name': name,
+      'email': email,
       'active': 1,
     });
+  }
 
-    final user2Id = await db.insert('users', {
-      'name': 'Bruno Costa',
-      'email': 'bruno.costa@example.com',
-      'active': 1,
-    });
+  Future<int> _ensureEvent(
+    Database db, {
+    required String name,
+    required String description,
+    required String date,
+    required int eventType,
+    required String image,
+  }) async {
+    final existing = await db.query(
+      'events',
+      columns: ['id'],
+      where: 'name = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
 
-    final event1Id = await db.insert('events', {
-      'name': 'Flutter Workshop',
-      'description': 'Oficina prática de Flutter',
-      'date': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-      'eventType': 1,
-      'image': null,
-    });
+    if (existing.isNotEmpty) {
+      return existing.first['id'] as int;
+    }
 
-    final event2Id = await db.insert('events', {
-      'name': 'Encontro de Devs',
-      'description': 'Palestras e networking',
-      'date': DateTime.now().add(const Duration(days: 30)).toIso8601String(),
-      'eventType': 2,
-      'image': null,
+    return db.insert('events', {
+      'name': name,
+      'description': description,
+      'date': date,
+      'eventType': eventType,
+      'image': image,
     });
+  }
+
+  Future<void> _ensureRegistration(
+    Database db, {
+    required int userId,
+    required int eventId,
+    required int isConfirmed,
+  }) async {
+    final existing = await db.query(
+      'registrations',
+      columns: ['id'],
+      where: 'userId = ? AND eventId = ?',
+      whereArgs: [userId, eventId],
+      limit: 1,
+    );
+
+    if (existing.isNotEmpty) {
+      return;
+    }
 
     await db.insert('registrations', {
-      'userId': user1Id,
-      'eventId': event1Id,
-      'isConfirmed': 1,
-    });
-
-    await db.insert('registrations', {
-      'userId': user2Id,
-      'eventId': event2Id,
-      'isConfirmed': 0,
+      'userId': userId,
+      'eventId': eventId,
+      'isConfirmed': isConfirmed,
     });
   }
 }
