@@ -60,8 +60,19 @@ class _TabbedPagesViewState extends State<TabbedPagesView> {
     });
   }
 
-  void _openFullPage(Widget page) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  Future<void> _openFullPage(Widget page) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+
+    if (!mounted) {
+      return;
+    }
+
+    await Future.wait([
+      _userViewModel.loadUsers(),
+      _eventViewModel.loadEvents(),
+      _registrationViewModel.loadRegistrations(),
+      _loadLookups(),
+    ]);
   }
 
   Widget _buildSectionHeader(String title) {

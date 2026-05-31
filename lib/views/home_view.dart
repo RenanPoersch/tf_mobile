@@ -290,11 +290,17 @@ class _HomeViewState extends State<HomeView> {
         return;
       }
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((_) {
+        if (!mounted) {
+          return;
+        }
+
+        _eventViewModel.loadEvents();
+      });
     });
   }
 
-  void _openEventForm() {
+  Future<void> _openEventForm() async {
     Navigator.of(context).pop();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
@@ -308,7 +314,13 @@ class _HomeViewState extends State<HomeView> {
             await _eventViewModel.addEvent(event);
           },
         ),
-      );
+      ).then((_) {
+        if (!mounted) {
+          return;
+        }
+
+        _eventViewModel.loadEvents();
+      });
     });
   }
 
@@ -353,11 +365,6 @@ class _HomeViewState extends State<HomeView> {
               onTap: () => _openPage(const TabbedPagesView()),
             ),
             const Divider(),
-            ListTile(
-              leading: const Icon(Icons.add_circle_outline),
-              title: const Text('Novo Evento'),
-              onTap: _openEventForm,
-            ),
           ],
         ),
       ),
