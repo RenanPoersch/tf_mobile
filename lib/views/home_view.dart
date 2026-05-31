@@ -100,8 +100,6 @@ class _HomeViewState extends State<HomeView> {
               const SizedBox(height: 12),
               Text('Data: $dateText'),
               Text('Tipo: ${event.eventType}'),
-              const SizedBox(height: 12),
-              Text('Imagem: ${event.image.isEmpty ? 'Sem imagem' : event.image}'),
             ],
           ),
         );

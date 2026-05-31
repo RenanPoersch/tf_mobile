@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/event.dart';
 
 typedef OnSaveEvent = Future<void> Function(Event event);
@@ -35,7 +36,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     _descriptionCtrl = TextEditingController(text: widget.initial?.description ?? '');
     _selectedDate = widget.initial?.date;
     _dateCtrl = TextEditingController(
-      text: widget.initial?.date.toIso8601String().split('T').first ?? '',
+      text: widget.initial != null ? DateFormat('dd/MM/yyyy').format(widget.initial!.date) : '',
     );
     _typeCtrl = TextEditingController(
       text: widget.initial?.eventType.toString() ?? '',
@@ -67,7 +68,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
 
     setState(() {
       _selectedDate = picked;
-      _dateCtrl.text = picked.toIso8601String().split('T').first;
+      _dateCtrl.text = DateFormat('dd/MM/yyyy').format(picked);
     });
   }
 
