@@ -74,63 +74,82 @@ class _EventViewState extends State<EventView> {
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.85,
+                    ),
                     itemCount: widget.eventViewModel.events.length,
                     itemBuilder: (context, index) {
                       final event = widget.eventViewModel.events[index];
-                      return ListTile(
-                        leading: _buildEventImage(event.image),
-                        title: Text(event.name),
-                        subtitle: Text(event.description),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.event,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                final confirmed = await showDialog<bool>(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: const Text('Confirmar'),
-                                    content: Text('Deletar evento "${event.name}"?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.of(ctx).pop(false),
-                                        child: const Text('Cancelar'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () => Navigator.of(ctx).pop(true),
-                                        child: const Text('Deletar'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-
-                                if (confirmed != true) return;
-
-                                await widget.eventViewModel.deleteEvent(event.id!);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Evento deletado')),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                      return GestureDetector(
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (_) => EventFormDialog(
                               initial: event,
-                              onSave: (e) async {
-                                await widget.eventViewModel.updateEvent(e);
-                              },
+                              onSave: (e) async => await widget.eventViewModel.updateEvent(e),
                             ),
                           );
                         },
+                        child: Card(
+                          clipBehavior: Clip.antiAlias,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(child: _buildEventImage(event.image)),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(event.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                          const SizedBox(height: 4),
+                                          Text(event.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () async {
+                                        final confirmed = await showDialog<bool>(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: const Text('Confirmar'),
+                                            content: Text('Deletar evento "${event.name}"?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.of(ctx).pop(false),
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () => Navigator.of(ctx).pop(true),
+                                                child: const Text('Deletar'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirmed != true) return;
+
+                                        await widget.eventViewModel.deleteEvent(event.id!);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Evento deletado')),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
