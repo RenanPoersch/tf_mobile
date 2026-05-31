@@ -115,44 +115,46 @@ class _RegistrationViewState extends State<RegistrationView> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-      title: const Text('Nova Inscrição'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DropdownButtonFormField<int>(
-              value: selectedUser,
-              items: _users.map((u) => DropdownMenuItem(value: u.id, child: Text(u.name))).toList(),
-              onChanged: (v) => selectedUser = v,
-              decoration: const InputDecoration(labelText: 'Usuário'),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<int>(
-              value: selectedEvent,
-              items: _events.map((e) => DropdownMenuItem(value: e.id, child: Text(e.name))).toList(),
-              onChanged: (v) => selectedEvent = v,
-              decoration: const InputDecoration(labelText: 'Evento'),
-            ),
-            const SizedBox(height: 8),
-            CheckboxListTile(
-              value: confirmed,
-              onChanged: (v) => confirmed = v ?? false,
-              title: const Text('Confirmado'),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: const Text('Nova Inscrição'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<int>(
+                value: selectedUser,
+                items: _users.map((u) => DropdownMenuItem(value: u.id, child: Text(u.name))).toList(),
+                onChanged: (v) => setState(() => selectedUser = v),
+                decoration: const InputDecoration(labelText: 'Usuário'),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<int>(
+                value: selectedEvent,
+                items: _events.map((e) => DropdownMenuItem(value: e.id, child: Text(e.name))).toList(),
+                onChanged: (v) => setState(() => selectedEvent = v),
+                decoration: const InputDecoration(labelText: 'Evento'),
+              ),
+              const SizedBox(height: 8),
+              CheckboxListTile(
+                value: confirmed,
+                onChanged: (v) => setState(() => confirmed = v ?? false),
+                title: const Text('Confirmado'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancelar')),
+            ElevatedButton(
+              onPressed: () async {
+                if (selectedUser == null || selectedEvent == null) return;
+                final reg = Registration(id: null, userId: selectedUser!, eventId: selectedEvent!, isConfirmed: confirmed);
+                await widget.registrationViewModel.addRegistration(reg);
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('Salvar'),
             ),
           ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancelar')),
-          ElevatedButton(
-            onPressed: () async {
-              if (selectedUser == null || selectedEvent == null) return;
-              final reg = Registration(id: null, userId: selectedUser!, eventId: selectedEvent!, isConfirmed: confirmed);
-              await widget.registrationViewModel.addRegistration(reg);
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Salvar'),
-          ),
-        ],
       ),
     );
   }
