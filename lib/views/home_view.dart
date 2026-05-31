@@ -99,7 +99,7 @@ class _HomeViewState extends State<HomeView> {
               Text(event.description),
               const SizedBox(height: 12),
               Text('Data: $dateText'),
-              Text('Tipo: ${event.eventType}'),
+              Text('Tipo: ${event.eventTypeLabel}'),
             ],
           ),
         );

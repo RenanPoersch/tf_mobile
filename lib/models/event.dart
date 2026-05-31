@@ -1,3 +1,37 @@
+enum EventType { presencial, online, hibrido, workshop, palestra, curso, meetup, webinar, conferencia }
+
+extension EventTypeExt on EventType {
+  int get value => index + 1;
+
+  String get label {
+    switch (this) {
+      case EventType.presencial:
+        return 'Presencial';
+      case EventType.online:
+        return 'Online';
+      case EventType.hibrido:
+        return 'Híbrido';
+      case EventType.workshop:
+        return 'Workshop';
+      case EventType.palestra:
+        return 'Palestra';
+      case EventType.curso:
+        return 'Curso';
+      case EventType.meetup:
+        return 'Meetup';
+      case EventType.webinar:
+        return 'Webinar';
+      case EventType.conferencia:
+        return 'Conferência';
+    }
+  }
+}
+
+EventType _eventTypeFromValue(int v) {
+  if (v >= 1 && v <= EventType.values.length) return EventType.values[v - 1];
+  return EventType.presencial;
+}
+
 class Event {
   int? id;
   String name;
@@ -54,4 +88,8 @@ class Event {
       image: image ?? this.image
     );
   }
+
+  EventType get typeEnum => _eventTypeFromValue(eventType);
+
+  String get eventTypeLabel => typeEnum.label;
 }

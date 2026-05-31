@@ -23,7 +23,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _descriptionCtrl;
   late final TextEditingController _dateCtrl;
-  late final TextEditingController _typeCtrl;
+  int? _selectedType;
   late final TextEditingController _imageCtrl;
 
   DateTime? _selectedDate;
@@ -38,9 +38,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     _dateCtrl = TextEditingController(
       text: widget.initial != null ? DateFormat('dd/MM/yyyy').format(widget.initial!.date) : '',
     );
-    _typeCtrl = TextEditingController(
-      text: widget.initial?.eventType.toString() ?? '',
-    );
+    _selectedType = widget.initial?.eventType ?? EventType.presencial.value;
     _imageCtrl = TextEditingController(text: widget.initial?.image ?? '');
   }
 
@@ -49,7 +47,6 @@ class _EventFormDialogState extends State<EventFormDialog> {
     _nameCtrl.dispose();
     _descriptionCtrl.dispose();
     _dateCtrl.dispose();
-    _typeCtrl.dispose();
     _imageCtrl.dispose();
     super.dispose();
   }
@@ -81,7 +78,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
       name: _nameCtrl.text.trim(),
       description: _descriptionCtrl.text.trim(),
       date: _selectedDate!,
-      eventType: int.tryParse(_typeCtrl.text.trim()) ?? 0,
+      eventType: _selectedType ?? EventType.presencial.value,
       image: _imageCtrl.text.trim(),
     );
 
@@ -139,19 +136,15 @@ class _EventFormDialogState extends State<EventFormDialog> {
                 },
               ),
               const SizedBox(height: 8),
-              TextFormField(
-                controller: _typeCtrl,
-                decoration: const InputDecoration(labelText: 'Tipo de Evento'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Obrigatório';
-                  }
-                  if (int.tryParse(value.trim()) == null) {
-                    return 'Deve ser um número';
-                  }
-                  return null;
-                },
+              Column(
+                children: EventType.values.map((t) {
+                  return RadioListTile<int>(
+                    title: Text(t.label),
+                    value: t.value,
+                    groupValue: _selectedType,
+                    onChanged: (v) => setState(() => _selectedType = v),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 8),
               TextFormField(
